@@ -11,3 +11,4 @@ my $meetup = Meetup::API->new();
 $meetup->read_credentials;
 
 print Dumper $meetup->group('Perl-User-Groups-Rhein-Main')->get;
+print Dumper $meetup->group_events('Perl-User-Groups-Rhein-Main')->get;
