@@ -196,7 +196,7 @@ sub request( $self, $method, $url, %params ) {
 # We also allow to simply fetch a signed URL
 # yet still handle it through our framework, even if we don't have
 # the appropriate api_key.
-sub fetch_signed_url( $self, %options ) {
+sub fetch_signed_url( $self, $url, %options ) {
 }
 
 =head2 C<< ->parse_response( $body, $headers ) >>
