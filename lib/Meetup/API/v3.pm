@@ -127,7 +127,8 @@ the URL parameters and appends the remaining parameters to the URL.
 =cut
 
 sub url_for( $self, $item, %options ) {
-    (my $url = $self->url_map->{$item} ) =~ s/\{(\w+)\}/exists $options{$1}? uri_escape delete $options{$1}:$1/ge;
+    (my $url = $self->url_map->{$item} )
+      =~ s/\{(\w+)\}/exists $options{$1}? uri_escape delete $options{$1}:$1/ge;
     $url = URI->new( $self->API_BASE . $url );
     $url->query_form( key => $self->api_key, sign => 'true', %options );
     $url
