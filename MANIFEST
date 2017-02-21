@@ -1,6 +1,8 @@
 .gitignore
+Changes
 examples/dump-group.pl
 lib/Meetup/API.pm
+lib/Meetup/API/v3.pm
 Makefile.PL
 MANIFEST			This list of files
 MANIFEST.SKIP
