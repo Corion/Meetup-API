@@ -65,6 +65,10 @@ with the API key:
 
 =back
 
+=head1 SEE ALSO
+
+L<Meetup::API::v3>
+
 =cut
 
 1;
