@@ -9,3 +9,4 @@ Meetup-API-*/
 .releaserc
 cover_db
 MYMETA.*
+*.credentials
