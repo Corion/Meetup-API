@@ -1,0 +1,43 @@
+NAME
+
+    Meetup::API - interface to the Meetup API
+
+SYNOPSIS
+
+      use Meetup::API;
+      my $meetup = Meetup::API->new();
+      my $upcoming = $meetup->
+
+METHODS
+
+ Meetup::API->new %options
+
+    version
+
+      Allows you to specify the API version. The current default is v3,
+      which corresponds to the Meetup API version 3 as documented at
+      http://www.meetup.com/en-EN/meetup_api/docs/.
+
+SETUP
+
+    0. Register with meetup.com
+
+    1. Click on their verification email link
+
+    2. Visit https://secure.meetup.com/de-DE/meetup_api/key/ to get the API
+    key
+
+    4. Create a JSON file named meetup.credentials
+
+      This file should live in your home directory with the API key:
+
+          {
+            "applicationKey": ".............."
+          }
+
+NAME
+
+    Meetup::API::v3 - Meetup API
+
+METHODS
+
