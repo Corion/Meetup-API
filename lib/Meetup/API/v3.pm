@@ -79,7 +79,7 @@ has 'json' => (
     is => 'lazy',
     default => sub {
         require JSON::XS;
-        JSON::XS->new()->ascii
+        JSON::XS->new()->utf8
     },
 );
 
