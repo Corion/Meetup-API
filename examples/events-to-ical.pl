@@ -96,20 +96,23 @@ sub get_meetup_event_uid {
 
 sub add_event {
     my( $caldav, $calendar, $event ) = @_;
-    my $uid = get_meetup_event_uid( $event );
+    my $handle = $caldav->NewEvent( $calendar, meetup_to_icalendar( $event ));
+}
+sub meetup_to_icalendar {
+    my( $meetup ) = @_;
+    my $uid = get_meetup_event_uid( $meetup );
     if( $event->{time} !~ /^(\d+)\d\d\d$/ ) {
-        warn "Weirdo timestamp '$event->{time}' for event";
+        warn "Weirdo timestamp '$meetup->{time}' for event";
         return;
     };
     my $start_epoch = $1;
-    warn sprintf "%s at %s", $event->{name}, strftime( '%Y%m%dT%H%M%SZ', gmtime( $start_epoch ));
-    my $handle = $caldav->NewEvent( $calendar, {
+    warn sprintf "%s at %s", $meetup->{name}, strftime( '%Y%m%dT%H%M%SZ', gmtime( $start_epoch ));
+    return {
         uid      => $uid,
-        title    => $event->{name},
+        title    => $meetup->{name},
         start    => strftime( '%Y-%m-%dT%H:%M:%SZ', gmtime( $start_epoch )),
         #duration => 3600,
-    });
-    print Dumper $handle;
+    }
 }
 
 if( -f $davcalendar ) {
@@ -141,6 +144,7 @@ if( -f $davcalendar ) {
     for my $event (@$events) {
         #use Data::Dumper;
         #warn Dumper $event;
+        # Convert new event, for easy comparison
         my $uid = get_meetup_event_uid( $event );
         
         if( $event->{time} !~ /^(\d+)\d\d\d$/ ) {
