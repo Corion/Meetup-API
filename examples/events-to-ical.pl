@@ -97,21 +97,37 @@ sub get_meetup_event_uid {
 sub add_event {
     my( $caldav, $calendar, $event ) = @_;
     my $handle = $caldav->NewEvent( $calendar, meetup_to_icalendar( $event ));
+    #print Dumper $handle;
 }
+
 sub meetup_to_icalendar {
     my( $meetup ) = @_;
     my $uid = get_meetup_event_uid( $meetup );
-    if( $event->{time} !~ /^(\d+)\d\d\d$/ ) {
+    if( $meetup->{time} !~ /^(\d+)\d\d\d$/ ) {
         warn "Weirdo timestamp '$meetup->{time}' for event";
         return;
     };
     my $start_epoch = $1;
-    warn sprintf "%s at %s", $meetup->{name}, strftime( '%Y%m%dT%H%M%SZ', gmtime( $start_epoch ));
+    
+    # We chuck everything into the floating "local" timezone
+    my $startTime = strftime( '%Y-%m-%dT%H:%M:%SZ', gmtime( $start_epoch + ($meetup->{utc_offset} / 1000)));
+    #my $tzName = sprintf 'Etc/UTC+%02d', ($meetup->{utc_offset} / 1000 / 3600);
     return {
         uid      => $uid,
         title    => $meetup->{name},
-        start    => strftime( '%Y-%m-%dT%H:%M:%SZ', gmtime( $start_epoch )),
+        start    => $startTime,
+        #timeZone => $tzName,
         #duration => 3600,
+        links    => {
+            href => { value => $meetup->{link} },
+            title => { value => 'Meetup Link' },
+        },
+        locations => {
+            name => { name => $meetup->{venue}->{name} },
+            address => {
+                value   => join( "\n", $meetup->{venue}->{address_1}, $meetup->{venue}->{city})
+            }
+        },
     }
 }
 
@@ -157,9 +173,10 @@ if( -f $davcalendar ) {
         if( exists $upstream_events{ $uid }) {
             # Well, determine if really different, also determine what changed
             # and then synchronize the two
-            #add_event( $calendar, $event );
             print "$name exists\n";
+            add_event( $CalDAV, $davcalendar, $event );
         } else {
+            #warn sprintf "%s at %s", $meetup->{name}, strftime( '%Y%m%dT%H%M%SZ', gmtime( $start_epoch ));
             add_event( $CalDAV, $davcalendar, $event );
         };
     };
