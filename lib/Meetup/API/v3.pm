@@ -197,6 +197,16 @@ sub request( $self, $method, $url, %params ) {
 # yet still handle it through our framework, even if we don't have
 # the appropriate api_key.
 sub fetch_signed_url( $self, $url, %options ) {
+    $self->user_agent->http_request(
+        'GET' => $url,
+        headers => {
+            'Content-Type'  => 'application/x-www-form-urlencoded', # ???
+        },
+    )->then(sub($body,$headers) {
+        Future->done(
+            $self->parse_response($body,$headers)
+        );
+    });
 }
 
 =head2 C<< ->parse_response( $body, $headers ) >>
