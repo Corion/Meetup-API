@@ -185,7 +185,7 @@ sub request( $self, $method, $url, %params ) {
         $method => $url,
         headers => {
             'Content-Type'  => 'application/x-www-form-urlencoded', # ???
-            },
+        },
     )->then(sub($body,$headers) {
         Future->done(
             $self->parse_response($body,$headers)
