@@ -172,7 +172,7 @@ sub read_credentials($self,%options) {
     $self->{api_key} = $cfg->{applicationKey}
 }
 
-=head2 C<< ->request( $method, $url, %params >>
+=head2 C<< ->request( $method, $url, %params ) >>
 
   my $r = $meetup->request(...);
 
