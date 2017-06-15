@@ -70,6 +70,9 @@ $meetup->read_credentials;
 
 #print Dumper $meetup->group('Perl-User-Groups-Rhein-Main')->get;
 my $events = $meetup->group_events($groupname)->get;
+        #use Data::Dumper;
+        #warn Dumper $events->[1];
+        #exit;
 
 sub entry_is_different {
     my( $entry, $match ) = @_;
@@ -160,6 +163,7 @@ if( -f $davcalendar ) {
     for my $event (@$events) {
         #use Data::Dumper;
         #warn Dumper $event;
+        #exit;
         # Convert new event, for easy comparison
         my $uid = get_meetup_event_uid( $event );
         
