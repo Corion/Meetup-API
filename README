@@ -35,9 +35,7 @@ SETUP
             "applicationKey": ".............."
           }
 
-NAME
+SEE ALSO
 
-    Meetup::API::v3 - Meetup API
-
-METHODS
+    Meetup::API::v3
 

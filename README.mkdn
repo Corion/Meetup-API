@@ -35,8 +35,6 @@ to get the API key
           "applicationKey": ".............."
         }
 
-# NAME
+# SEE ALSO
 
-Meetup::API::v3 - Meetup API 
-
-# METHODS
+[Meetup::API::v3](https://metacpan.org/pod/Meetup::API::v3)
