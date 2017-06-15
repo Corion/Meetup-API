@@ -55,7 +55,7 @@ my %module = (
     },
 
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean               => { FILES => 'DBIx-PivotQuery-*' },
+    clean               => { FILES => 'Meetup-API-*' },
 
     test            => { TESTS => join( ' ', @tests ) },
 );
