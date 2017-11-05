@@ -48,7 +48,10 @@ my %module = (
         'Filter::signatures' => 0,
         'URI::URL' => 0,
         'URI::Escape' => 0,
+        'POSIX' => 0, # for strftime
         'Net::CalDAVTalk' => 0,
+        'Data::ICal::Entry::Event' => 0,
+        'Date::ICal',
         'Future::HTTP' => 0,
     },
     TEST_REQUIRES => {
