@@ -48,6 +48,7 @@ my %module = (
         'Filter::signatures' => 0,
         'URI::URL' => 0,
         'URI::Escape' => 0,
+        'Net::CalDAVTalk' => 0,
         'Future::HTTP' => 0,
     },
     TEST_REQUIRES => {
