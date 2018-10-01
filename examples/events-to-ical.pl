@@ -178,7 +178,7 @@ sub read_ics( $filename ) {
     );
 }
 
-sub read_dav( $davserver ) {
+sub read_dav( $davserver, $davcalendar ) {
     require Net::CalDAVTalk;
     my $url = URI::URL->new( $davserver );
 
@@ -194,7 +194,7 @@ sub read_dav( $davserver ) {
         logger => sub { warn "DAV: @_" },
     );
 
-    $CalDAV->GetCalendar($davcalendar);
+    return $CalDAV
 }
 
 my $calendar;
@@ -205,13 +205,14 @@ if( -f $davcalendar or ! $davserver) {
     $calendar = read_ics( $davcalendar );
 
 } else {
-    $calendar = read_dav( $davcalendar );
+    $calendar = read_dav( $davserver, $davcalendar );
 };
 
 my ( $upstream_events, $removed, $errors );
 if( $syncToken and !$force) {
     ( undef, $removed, $errors ) = $calendar->SyncEvents($davcalendar, after => $today, syncToken => $syncToken );
 };
+
 $upstream_events = $calendar->GetEvents($davcalendar, after => $today );
 # The user deleted these on their DAV calendar, so we won't re-sync
 # these unless --force'd
