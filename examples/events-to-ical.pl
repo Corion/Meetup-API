@@ -172,14 +172,9 @@ sub entry_is_different( $dav, $meetup, %upstream ) {
 };
 
 sub read_ics( $filename ) {
-    require Data::ICal;
     require Data::ICal::DAVAdapter;
-    my $ics = -e $filename
-              ? Data::ICal->new( filename => $filename, vcal10 => 0)->return_value
-              : Data::ICal->new( vcal10 => 0)->return_value
-              ;
     Data::ICal::DAVAdapter->new(
-        ics => $ics
+        filename => $filename
     );
 }
 

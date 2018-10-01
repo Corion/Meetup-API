@@ -5,14 +5,19 @@ use Moo 2;
 use Filter::signatures;
 use feature 'signatures';
 no warnings 'experimental::signatures';
-use Text::VCardFast qw(vcard2hash);
-use Scalar::Util 'blessed';
+use Data::ICal;
 
 our $VERSION = '0.01';
 
 =head1 NAME
 
 Data::ICal::DAVAdapter - adapt Data::ICal to the Net::DAVTalk API
+
+=head1 SYNOPSIS
+
+    my $calendar = Data::ICal::DAVAdapter->new(
+        filename => $filename
+    );
 
 =head1 DESCRIPTION
 
@@ -23,6 +28,17 @@ This is not really intended for use beyond synchronizing Meetup and ICS files
 has 'ics' => (
     is => 'ro',
 );
+
+around BUILDARGS => sub( $orig, $class, %options ) {
+    if( my $filename = delete $options{ filename }) {
+        my $ics = -e $filename
+                  ? Data::ICal->new( filename => $filename, vcal10 => 0)->return_value
+                  : Data::ICal->new( vcal10 => 0)->return_value
+                  ;
+        $options{ ics } = $ics
+    };
+    $class->$orig( %options )
+};
 
 sub NewEvent($self, $calendar, $data) {
     my $event = Data::ICal::Entry::Event->new();
