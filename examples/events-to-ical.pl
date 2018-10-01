@@ -55,9 +55,9 @@ GetOptions(
     's|server:s' => \my $davserver,
     'g|group:s' => \my $groupname,
     'sync-file:s' => \my $sync_file,
-    
+
     'x|exclude:s' => \my @exclude,
-    
+
     'f|force'     => \my $force,
     'n|dry-run'   => \my $dryrun,
     'v|verbose'   => \my $verbose,
@@ -130,25 +130,37 @@ sub ical_prop( $ical, $property ) {
     }
 }
 
-sub entry_is_different( $dav, $meetup ) {
+sub entry_is_different( $dav, $meetup, %upstream ) {
     my $meetup_ical = as_ical( meetup_to_icalendar( $meetup ));
 
     #warn Dumper $dav;
     my $dav_ical = as_ical( $dav );
-    
+
     my %differences;
-    
+
+    my %data = (
+        'ical'   => $dav_ical,
+        'meetup' => $meetup_ical,
+    );
+    my %other = (
+        'ical'   => 'meetup',
+        'meetup' => 'ical',
+    );
+
     for my $attribute (qw( dtstart location )) {
-        my $upstream = ical_prop( $meetup_ical, $attribute );
-        my $local = ical_prop( $dav_ical, $attribute );
-        
+        my $upstream_moniker   = $upstream{ $attribute } || 'meetup';
+        my $downstream_moniker = $other{ $upstream_moniker };
+
+        my $upstream = ical_prop( $data{ $upstream_moniker }, $attribute );
+        my $local    = ical_prop( $data{ $downstream_moniker }, $attribute );
+
         # Exclude whitespace changes
         for ($local,$upstream) {
             s!\s+! !g if defined $_;
         };
-        
+
         if( $local ne $upstream ) {
-            $Data::Dumper::Useqq = 1;
+            #$Data::Dumper::Useqq = 1;
             #warn "Meetup " . Dumper $upstream;
             #warn "DAV    " . Dumper $local;
             verbose( "$attribute has changed from '$local' to '$upstream'");
@@ -188,7 +200,7 @@ if( -f $davcalendar ) {
         ( undef, $removed, $errors ) = $CalDAV->SyncEvents($davcalendar, after => $today, syncToken => $syncToken );
     };
     $upstream_events = $CalDAV->GetEvents($davcalendar, after => $today );
-    
+
     # The user deleted these on their DAV calendar, so we won't re-sync
     # these unless --force'd
     my %dav_deleted = map {
@@ -203,7 +215,7 @@ if( -f $davcalendar ) {
     EVENT: for my $event (@$events) {
         # Convert new event, for easy comparison
         my $uid = get_meetup_event_uid( $event );
-        
+
         if( $event->{time} !~ /^(\d+)\d\d\d$/ ) {
             warn "Weirdo timestamp '$event->{time}' for event";
             return;
@@ -216,7 +228,7 @@ if( -f $davcalendar ) {
                 verbose("'$name' excluded (/$exclude/)");
                 next EVENT;
             };
-        };        
+        };
 
         if( my $dav_entry = $upstream_events{ $uid }) {
             # Well, determine if really different, also determine what changed
