@@ -14,6 +14,10 @@ our $VERSION = '0.01';
 
 Data::ICal::DAVAdapter - adapt Data::ICal to the Net::DAVTalk API
 
+=head1 DESCRIPTION
+
+This is not really intended for use beyond synchronizing Meetup and ICS files
+
 =cut
 
 has 'ics' => (
