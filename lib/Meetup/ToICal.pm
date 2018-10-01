@@ -57,7 +57,7 @@ sub meetup_to_icalendar( $meetup ) {
     my $start_epoch = $1;
     
     # We chuck everything into the floating "local" timezone
-    my $startTime = strftime( '%Y-%m-%dT%H:%M:%SZ', gmtime( $start_epoch + ($meetup->{utc_offset} / 1000)));
+    my $startTime = strftime( '%Y-%m-%dT%H:%M:%SZ', gmtime( $start_epoch )); # + ($meetup->{utc_offset} / 1000)));
     my $createdTime = strftime( '%Y-%m-%dT%H:%M:%SZ', gmtime( $meetup->{created} / 1000));
 
     #use Data::Dumper;
