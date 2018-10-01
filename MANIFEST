@@ -2,6 +2,7 @@
 Changes
 examples/dump-group.pl
 examples/events-to-ical.pl
+lib/Data/ICal/DAVAdapter.pm
 lib/Meetup/API.pm
 lib/Meetup/API/v3.pm
 lib/Meetup/ToICal.pm
@@ -12,6 +13,7 @@ META.json
 META.yml
 README
 README.mkdn
+t/20181002-frankfurt-pm.ics
 t/meetup-to-ical.t
 t/url-for.t
 xt/99-changes.t
