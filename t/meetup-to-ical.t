@@ -3,6 +3,7 @@ use strict;
 use Test::More tests => 4;
 use Meetup::ToICal 'meetup_to_icalendar';
 use Net::CalDAVTalk;
+use Data::Dumper;
 
 my $meetup = {
           'created' => '1478470295000',
@@ -50,8 +51,7 @@ my $entry = $entries->{entries}->[0];
 
 ok $entry, "We created a calendar entry";
 
-use Data::Dumper;
-diag Dumper $entry;
+#diag Dumper $entry;
 
 is $entry->property('dtstart')->[0]->value, '20171107T190000', "The event starts at the correct time"
     or diag $entry->as_string;

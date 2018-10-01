@@ -47,6 +47,7 @@ my %module = (
         'Exporter'                 => 5, # for 'import'
         'Carp'                     => 0,
         'Filter::signatures'       => 0,
+        'Moo'                      => 2,
         'URI::URL'                 => 0,
         'URI::Escape'              => 0,
         'POSIX'                    => 0, # for strftime
@@ -57,6 +58,7 @@ my %module = (
     },
     TEST_REQUIRES => {
         'Test::More'               => 0,
+        'Data::Dumper'             => 0,
     },
 
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
