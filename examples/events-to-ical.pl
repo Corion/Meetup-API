@@ -235,6 +235,9 @@ if( -f $davcalendar ) {
             # and then synchronize the two
             if( entry_is_different( $dav_entry, $event )) {
                 verbose( "$name exists and is different, updating" );
+
+                # This assumes that Meetup will be leading for all
+                # attributes, even attendance...
                 update_event( $CalDAV, $dav_entry->{href}, $event );
                 #die Dumper $dav_entry;
             } else {
