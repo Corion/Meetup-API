@@ -166,7 +166,7 @@ sub read_credentials($self,%options) {
     };
     open my $fh, '<:utf8', $options{ filename }
         or croak "Couldn't read API key from '$options{ filename }' : $!";
-    local $/;
+    local $/; # /
     my $cfg = $self->json->decode(<$fh>);
     $self->{api_key} = $cfg->{applicationKey}
 }
