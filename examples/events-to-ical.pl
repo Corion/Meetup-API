@@ -1,13 +1,16 @@
-#!perl -w
+#!perl
 use strict;
+use warnings;
 use Filter::signatures;
 use feature 'signatures';
 no warnings 'experimental::signatures';
 use POSIX qw(strftime);
 use Meetup::API;
 use Meetup::ToICal qw(meetup_to_icalendar get_meetup_event_uid);
+use Net::CalDAVTalk;
 
-use Data::Dumper;
+#use Data::Dumper;
+#$Data::Dumper::Sortkeys = 1;
 
 use vars '$VERSION';
 $VERSION = '0.01';
@@ -88,8 +91,6 @@ $meetup->read_credentials;
 
 my $events = $meetup->group_events($groupname)->get;
 
-#$Data::Dumper::Sortkeys = 1;
-
 sub verbose(@msg) {
     if( $verbose ) {
     #no warnings 'wide';
@@ -133,7 +134,6 @@ sub ical_prop( $ical, $property ) {
 sub entry_is_different( $dav, $meetup, %upstream ) {
     my $meetup_ical = as_ical( meetup_to_icalendar( $meetup ));
 
-    #warn Dumper $dav;
     my $dav_ical = as_ical( $dav );
 
     my %differences;
@@ -171,13 +171,19 @@ sub entry_is_different( $dav, $meetup, %upstream ) {
     scalar keys %differences
 };
 
-if( -f $davcalendar ) {
-    require Net::CalDAVTalk;
-    die "Don't know how to handle local calendar files yet";
-    #my $vcard = Net::CalDAVTalk::VCard->new_fromfile($item);
-    #push @contacts, $vcard;
+sub read_ics( $filename ) {
+    require Data::ICal;
+    require Data::ICal::DAVAdapter;
+    my $ics = -e $filename
+              ? Data::ICal->new( filename => $filename, vcal10 => 0)->return_value
+              : Data::ICal->new( vcal10 => 0)->return_value
+              ;
+    Data::ICal::DAVAdapter->new(
+        ics => $ics
+    );
+}
 
-} else {
+sub read_dav( $davserver ) {
     require Net::CalDAVTalk;
     my $url = URI::URL->new( $davserver );
 
@@ -193,73 +199,89 @@ if( -f $davcalendar ) {
         logger => sub { warn "DAV: @_" },
     );
 
-    my $calendar = $CalDAV->GetCalendar($davcalendar);
-    my ( $upstream_events, $removed, $errors );
+    $CalDAV->GetCalendar($davcalendar);
+}
 
-    if( $syncToken and !$force) {
-        ( undef, $removed, $errors ) = $CalDAV->SyncEvents($davcalendar, after => $today, syncToken => $syncToken );
-    };
-    $upstream_events = $CalDAV->GetEvents($davcalendar, after => $today );
+my $calendar;
+if( -f $davcalendar or ! $davserver) {
+    #die "Don't know how to handle local calendar files yet";
+    #my $vcard = Net::CalDAVTalk::VCard->new_fromfile($item);
+    #push @contacts, $vcard;
+    $calendar = read_ics( $davcalendar );
 
-    # The user deleted these on their DAV calendar, so we won't re-sync
-    # these unless --force'd
-    my %dav_deleted = map {
-        $_ => 1
-    } @$removed;
-    %dav_deleted = () if $force;
-
-    my %upstream_events = map {
-        $_->{uid} => $_
-    } @$upstream_events;
-
-    EVENT: for my $event (@$events) {
-        # Convert new event, for easy comparison
-        my $uid = get_meetup_event_uid( $event );
-
-        if( $event->{time} !~ /^(\d+)\d\d\d$/ ) {
-            warn "Weirdo timestamp '$event->{time}' for event";
-            return;
-        };
-        my $start_epoch = $1;
-        my $name = sprintf "%s at %s", $event->{name}, strftime( '%Y%m%dT%H%M%SZ', gmtime( $start_epoch ));
-
-        for my $exclude (@exclude) {
-            if( $event->{name} =~ /$exclude/ ) {
-                verbose("'$name' excluded (/$exclude/)");
-                next EVENT;
-            };
-        };
-
-        if( my $dav_entry = $upstream_events{ $uid }) {
-            # Well, determine if really different, also determine what changed
-            # and then synchronize the two
-            if( entry_is_different( $dav_entry, $event )) {
-                verbose( "$name exists and is different, updating" );
-
-                # This assumes that Meetup will be leading for all
-                # attributes, even attendance...
-                update_event( $CalDAV, $dav_entry->{href}, $event );
-                #die Dumper $dav_entry;
-            } else {
-                verbose( "$name exists and is the same in CalDAV" );
-            };
-
-        } elsif( $dav_deleted{ $uid } ) {
-            verbose("Skipping locally deleted event $name");
-
-        } else {
-            verbose("Found new entry $name, adding");
-            add_event( $CalDAV, $davcalendar, $event );
-            #warn sprintf "%s at %s", $meetup->{name}, strftime( '%Y%m%dT%H%M%SZ', gmtime( $start_epoch ));
-        };
-        #die;
-    };
-    #print sprintf "%d seconds taken to sync $url", time - $fb_sync;
-    if( $sync_file and my $token = $calendar->{syncToken}) {
-        open my $fh, '>', $sync_file
-            or warn "Couldn't create timestamp file '$sync_file'";
-        binmode $fh;
-        print $fh $token;
-    };
+} else {
+    $calendar = read_dav( $davcalendar );
 };
 
+my ( $upstream_events, $removed, $errors );
+if( $syncToken and !$force) {
+    ( undef, $removed, $errors ) = $calendar->SyncEvents($davcalendar, after => $today, syncToken => $syncToken );
+};
+$upstream_events = $calendar->GetEvents($davcalendar, after => $today );
+# The user deleted these on their DAV calendar, so we won't re-sync
+# these unless --force'd
+my %dav_deleted = map {
+    $_ => 1
+} @$removed;
+%dav_deleted = () if $force;
+
+my %upstream_events = map {
+    $_->{uid} => $_
+} @$upstream_events;
+
+EVENT: for my $event (@$events) {
+    # Convert new event, for easy comparison
+    my $uid = get_meetup_event_uid( $event );
+
+    if( $event->{time} !~ /^(\d+)\d\d\d$/ ) {
+        warn "Weirdo timestamp '$event->{time}' for event";
+        return;
+    };
+    my $start_epoch = $1;
+    my $name = sprintf "%s at %s", $event->{name}, strftime( '%Y%m%dT%H%M%SZ', gmtime( $start_epoch ));
+
+    for my $exclude (@exclude) {
+        if( $event->{name} =~ /$exclude/ ) {
+            verbose("'$name' excluded (/$exclude/)");
+            next EVENT;
+        };
+    };
+
+    if( my $dav_entry = $upstream_events{ $uid }) {
+        # Well, determine if really different, also determine what changed
+        # and then synchronize the two
+        if( entry_is_different( $dav_entry, $event )) {
+            verbose( "$name exists and is different, updating" );
+
+            # This assumes that Meetup will be leading for all
+            # attributes, even attendance...
+            update_event( $calendar, $dav_entry->{href}, $event );
+            #die Dumper $dav_entry;
+        } else {
+            verbose( "$name exists and is the same in CalDAV" );
+        };
+
+    } elsif( $dav_deleted{ $uid } ) {
+        verbose("Skipping locally deleted event $name");
+
+    } else {
+        verbose("Found new entry $name, adding");
+        add_event( $calendar, $davcalendar, $event );
+        #warn sprintf "%s at %s", $meetup->{name}, strftime( '%Y%m%dT%H%M%SZ', gmtime( $start_epoch ));
+    };
+    #die;
+};
+#print sprintf "%d seconds taken to sync $url", time - $fb_sync;
+if( $sync_file and my $token = $calendar->{syncToken}) {
+    open my $fh, '>', $sync_file
+        or warn "Couldn't create timestamp file '$sync_file'";
+    binmode $fh;
+    print $fh $token;
+};
+
+if( ! $davserver ) {
+    open my $fh, '>', $davcalendar
+        or die "Couldn't save calendar: $!";
+    binmode $fh, ':raw';
+    print $fh $calendar->ics->as_string;
+}

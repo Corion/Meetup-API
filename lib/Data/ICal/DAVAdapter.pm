@@ -22,21 +22,21 @@ has 'ics' => (
 
 sub NewEvent($self, $calendar, $data) {
     my $event = Data::ICal::Entry::Event->new();
-    
+
     my %copy = %$data;
     $copy{ summary } = delete $copy{ title };
     $copy{ dtstart } = delete $copy{ start };
-    
+
     if( exists $copy{ locations }) {
         my $addr = delete $copy{ locations };
         $addr = join "\n", grep { defined $_ }
                     $addr->{location}->{name},
-                    $addr->{location}->{address}->{value}
+                    #$addr->{location}->{address}->{value}
                     ;
         $copy{ location } = $addr;
     };
     ($copy{ url }) = map { "$_->{href}" } values %{ delete $copy{ links }};
-    
+
     $event->add_properties( %copy );
     $self->ics->add_entry( $event );
 }
@@ -55,20 +55,30 @@ sub UpdateEvent( $self, $calendar, $data ) {
 
 sub GetEvents( $self, $calendar, %options ) {
     [ map {
-    
+
         my $ev = $_;
         my @prop = $ev->properties;
         my %res = %{ $ev->properties };
         for ( sort keys %res ) {
             $res{ $_ } = $res{ $_ }->[0]->value;
         };
-        
+
         $res{ start } = delete $res{ dtstart };
-        
-        use Data::Dumper;
-        warn Dumper \%res;
+
+        if( exists $res{ location }) {
+            $res{ locations } = {
+                location => {
+                    name => $res{ location },
+                    address => { name => "address", value => $res{ location }},
+                },
+            };
+            delete $res{ location };
+        };
+
+        #use Data::Dumper;
+        #warn Dumper \%res;
         \%res
-    
+
     } @{ $self->ics->entries } ]
 }
 
