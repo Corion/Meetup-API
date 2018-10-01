@@ -1,5 +1,4 @@
 package Meetup::ToICal;
-#!perl -w
 use strict;
 use Filter::signatures;
 use feature 'signatures';
@@ -10,7 +9,6 @@ use Data::ICal::Entry::Event;
 use Date::ICal;
 
 our @EXPORT_OK = qw(meetup_to_icalendar get_meetup_event_uid);
-
 our $VERSION = '0.01';
 
 =head1 NAME
