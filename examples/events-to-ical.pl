@@ -117,7 +117,7 @@ sub update_event {
         #warn Dumper $data;
         my $handle = $caldav->UpdateEvent( $href, $data);
     } else {
-        print "Would add event\n";
+        print "Would update event\n";
     };
 }
 
@@ -167,6 +167,7 @@ if( -f $davcalendar ) {
     die "Don't know how to handle local calendar files yet";
     #my $vcard = Net::CalDAVTalk::VCard->new_fromfile($item);
     #push @contacts, $vcard;
+
 } else {
     require Net::CalDAVTalk;
     my $url = URI::URL->new( $davserver );
