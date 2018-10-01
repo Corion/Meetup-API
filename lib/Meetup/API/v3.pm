@@ -38,8 +38,7 @@ The accessors can be set in the call to new.
 
 =cut
 
-use vars '$API_BASE';
-$API_BASE = 'https://api.meetup.com';
+our $API_BASE = 'https://api.meetup.com';
 
 =head2 C<< ->API_BASE >>
 
@@ -251,5 +250,35 @@ Returns information about events of a meetup group given its name in the URL.
 sub group_events( $self, $urlname ) {
     $self->request( GET => $self->url_for('group_events', urlname => $urlname ))
 }
+
+=head1 REPOSITORY
+
+The public repository of this module is
+L<https://github.com/Corion/Meetup-API>.
+
+=head1 SUPPORT
+
+The public support forum of this module is L<https://perlmonks.org/>.
+
+=head1 KNOWN ISSUES
+
+When Chrome is run in headless mode, Chrome throws a C<Lost UI shared context>
+error. This error can be ignored and does not affect the operation of this
+module.
+
+=head1 AUTHOR
+
+Max Maischein C<corion@cpan.org>
+
+=head1 COPYRIGHT (c)
+
+Copyright 2016-2018 by Max Maischein C<corion@cpan.org>.
+
+=head1 LICENSE
+
+This module is released under the same terms as Perl itself.
+
+=cut
+
 
 1;
