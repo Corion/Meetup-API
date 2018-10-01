@@ -12,7 +12,8 @@ Meetup::API - interface to the Meetup API
 
   use Meetup::API;
   my $meetup = Meetup::API->new();
-  my $upcoming = $meetup->
+  my $events = $meetup->group_events($groupname)->get;
+
 
 
 =head1 METHODS
