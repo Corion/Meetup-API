@@ -62,7 +62,7 @@ sub meetup_to_icalendar( $meetup ) {
     my $startTime = strftime( '%Y-%m-%dT%H:%M:%SZ', gmtime( $start_epoch + ($meetup->{utc_offset} / 1000)));
     my $createdTime = strftime( '%Y-%m-%dT%H:%M:%SZ', gmtime( $meetup->{created} / 1000));
 
-    use Data::Dumper;
+    #use Data::Dumper;
     #warn Dumper $meetup->{venue}->{address_1};
     #use Encode 'encode';
     #$meetup->{venue}->{address_1} = encode('Latin-1',$meetup->{venue}->{address_1});
