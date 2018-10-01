@@ -43,7 +43,7 @@ Existing events will not be overwritten.
 =head1 EXAMPLE
 
   events-to-ical.pl --group Perl-User-Groups-Rhein-Main --server https://calendar.example.com/ --calendar MyEvents
-  events-to-ical.pl --group Perl-User-Groups-Rhein-Main --server calendar.example.com
+  events-to-ical.pl --group Perl-User-Groups-Rhein-Main --calendar ~/.calendar/perl-rhine-main.ics
 
 =cut
 
@@ -51,12 +51,12 @@ use Getopt::Long;
 use Pod::Usage;
 
 GetOptions(
-    'c|calendar:s' => \my $davcalendar,
-    's|server:s' => \my $davserver,
-    'g|group:s' => \my $groupname,
-    'sync-file:s' => \my $sync_file,
+    'c|calendar=s' => \my $davcalendar,
+    's|server=s'   => \my $davserver,
+    'g|group=s'    => \my $groupname,
+    'sync-file=s'  => \my $sync_file,
 
-    'x|exclude:s' => \my @exclude,
+    'x|exclude=s' => \my @exclude,
 
     'f|force'     => \my $force,
     'n|dry-run'   => \my $dryrun,
