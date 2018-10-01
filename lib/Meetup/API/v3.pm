@@ -153,7 +153,8 @@ C<meetup.credentials>.
 =item C<config_dirs>
 
 Arrayref of directories which to search.
-The default directories are C<.>, C<$ENV{HOME}> and C<$ENV{USERPROFILE}>.
+The default directories are C<.>, C<$ENV{HOME}> and C<$ENV{USERPROFILE}>,
+in that order.
 
 =back
 
