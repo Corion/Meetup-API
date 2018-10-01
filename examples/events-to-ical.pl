@@ -53,8 +53,6 @@ use Pod::Usage;
 GetOptions(
     'c|calendar:s' => \my $davcalendar,
     's|server:s' => \my $davserver,
-    #'u|user:s' => \my $username,
-    #'p|pass:s' => \my $password,
     'g|group:s' => \my $groupname,
     'sync-file:s' => \my $sync_file,
     
@@ -97,7 +95,7 @@ $Data::Dumper::Sortkeys = 1;
 
 sub verbose(@msg) {
     if( $verbose ) {
-    no warning 'wide';
+    #no warnings 'wide';
         print "$_\n" for @msg
     };
 }
