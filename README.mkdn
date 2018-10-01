@@ -2,12 +2,6 @@
 [![Travis Build Status](https://travis-ci.org/Corion/Meetup-API.svg?branch=master)](https://travis-ci.org/Corion/Meetup-API)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/Corion/Meetup-API?branch=master&svg=true)](https://ci.appveyor.com/project/Corion/Meetup-API)
 
-CONTRIBUTING
-
-See lib/WWW/Mechanize/Chrome/Contributing.pod
-
-[Google Keep Extraction](https://github.com/Corion/WWW-Mechanize-Chrome/raw/master/demo/keep-export-demo.mp4)
-
 # NAME
 
 Meetup::API - interface to the Meetup API
