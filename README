@@ -1,41 +1,34 @@
-NAME
+Meetup::API - interface to the Meetup API
 
-    Meetup::API - interface to the Meetup API
 
-SYNOPSIS
 
-      use Meetup::API;
-      my $meetup = Meetup::API->new();
-      my $upcoming = $meetup->
+INSTALLATION
 
-METHODS
+This is a Perl module distribution. It should be installed with whichever
+tool you use to manage your installation of Perl, e.g. any of
 
- Meetup::API->new %options
+  cpanm .
+  cpan  .
+  cpanp -i .
 
-    version
+Consult http://www.cpan.org/modules/INSTALL.html for further instruction.
+Should you wish to install this module manually, the procedure is
 
-      Allows you to specify the API version. The current default is v3,
-      which corresponds to the Meetup API version 3 as documented at
-      http://www.meetup.com/en-EN/meetup_api/docs/.
+  perl Makefile.PL
+  make
+  make test
+  make install
 
-SETUP
 
-    0. Register with meetup.com
 
-    1. Click on their verification email link
 
-    2. Visit https://secure.meetup.com/de-DE/meetup_api/key/ to get the API
-    key
 
-    4. Create a JSON file named meetup.credentials
 
-      This file should live in your home directory with the API key:
 
-          {
-            "applicationKey": ".............."
-          }
 
 SEE ALSO
 
-    Meetup::API::v3
+L<Meetup::API::v3>
+
+
 
