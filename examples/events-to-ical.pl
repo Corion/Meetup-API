@@ -84,14 +84,11 @@ if( $sync_file and -r $sync_file ) {
 };
 my $meetup = Meetup::API->new();
 
-# Frankfurt am Main
-#my ($lat,$lon) = (50.110924, 8.682127);
-
 $meetup->read_credentials;
 
 my $events = $meetup->group_events($groupname)->get;
 
-$Data::Dumper::Sortkeys = 1;
+#$Data::Dumper::Sortkeys = 1;
 
 sub verbose(@msg) {
     if( $verbose ) {
