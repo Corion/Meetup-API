@@ -43,19 +43,19 @@ my %module = (
     },
 
     PREREQ_PM => {
-        'Exporter' => 5, # for 'import'
-        'Carp'     => 0,
-        'Filter::signatures' => 0,
-        'URI::URL' => 0,
-        'URI::Escape' => 0,
-        'POSIX' => 0, # for strftime
-        'Net::CalDAVTalk' => 0,
+        'Exporter'                 => 5, # for 'import'
+        'Carp'                     => 0,
+        'Filter::signatures'       => 0,
+        'URI::URL'                 => 0,
+        'URI::Escape'              => 0,
+        'POSIX'                    => 0, # for strftime
+        'Net::CalDAVTalk'          => 0,
         'Data::ICal::Entry::Event' => 0,
-        'Date::ICal',
-        'Future::HTTP' => 0,
+        'Date::ICal'               => 0,
+        'Future::HTTP'             => 0,
     },
     TEST_REQUIRES => {
-        'Test::More'   => 0,
+        'Test::More'               => 0,
     },
 
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
