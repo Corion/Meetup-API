@@ -17,3 +17,4 @@ Makefile$
 ^.releaserc
 ^Meetup-API-.*/
 ^Meetup-API-.*.tar.gz$
+^.*\.credentials$
