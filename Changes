@@ -1,2 +1,6 @@
+0.02 to be released
+    * Fixed timezone when converting to ICal
+    * Need minimum prerequisite of v0.10 for Net::CalDAVTalk (MANWAR)
+
 0.01 2018-10-01
     * Released on an unsuspecting world

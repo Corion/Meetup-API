@@ -13,7 +13,7 @@ our $VERSION = '0.01';
 
 =head1 NAME
 
-Meetup::API::v3 - Meetup API 
+Meetup::API::v3 - Meetup API
 
 =head1 SYNOPSIS
 
@@ -23,7 +23,7 @@ Meetup::API::v3 - Meetup API
 
   $meetup->read_credentials;
 
-print Dumper $meetup->group('Perl-User-Groups-Rhein-Main')->get;
+  print Dumper $meetup->group('Perl-User-Groups-Rhein-Main')->get;
 
 =head1 METHODS
 
