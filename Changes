@@ -1,4 +1,4 @@
-0.02 to be released
+0.02 2018-10-03
     * Fixed timezone when converting to ICal
     * Need minimum prerequisite of v0.10 for Net::CalDAVTalk (MANWAR)
     * Explicitly list JSON::PP and JSON::XS as prerequisites

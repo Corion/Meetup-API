@@ -10,7 +10,7 @@ use Date::ICal;
 use JSON::PP;
 
 our @EXPORT_OK = qw(meetup_to_icalendar get_meetup_event_uid);
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 NAME
 
