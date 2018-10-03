@@ -52,12 +52,6 @@ The public repository of this module is
 
 The public support forum of this module is [https://perlmonks.org/](https://perlmonks.org/).
 
-# KNOWN ISSUES
-
-When Chrome is run in headless mode, Chrome throws a `Lost UI shared context`
-error. This error can be ignored and does not affect the operation of this
-module.
-
 # AUTHOR
 
 Max Maischein `corion@cpan.org`

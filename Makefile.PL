@@ -54,6 +54,8 @@ my %module = (
         'Net::CalDAVTalk'          => '0.10',
         'Data::ICal::Entry::Event' => 0,
         'Date::ICal'               => 0,
+        'JSON::PP'                 => 0,
+        'JSON::XS'                 => 0,
         'Future::HTTP'             => 0,
     },
     TEST_REQUIRES => {
