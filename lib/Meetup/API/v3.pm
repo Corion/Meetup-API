@@ -260,12 +260,6 @@ L<https://github.com/Corion/Meetup-API>.
 
 The public support forum of this module is L<https://perlmonks.org/>.
 
-=head1 KNOWN ISSUES
-
-When Chrome is run in headless mode, Chrome throws a C<Lost UI shared context>
-error. This error can be ignored and does not affect the operation of this
-module.
-
 =head1 AUTHOR
 
 Max Maischein C<corion@cpan.org>
