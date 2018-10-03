@@ -7,6 +7,7 @@ use Exporter 'import';
 use POSIX qw(strftime);
 use Data::ICal::Entry::Event;
 use Date::ICal;
+use JSON::PP;
 
 our @EXPORT_OK = qw(meetup_to_icalendar get_meetup_event_uid);
 our $VERSION = '0.01';
@@ -39,16 +40,16 @@ sub get_meetup_event_uid( $event ) {;
     my $uid = $event->{id} . '@meetup.com';
 }
 
-=head2 C<< meetup_to_icalendar( $event ) >>
+=head2 C<< meetup_to_icalendar( $event, %options ) >>
 
-  my $data = meetup_to_icalendar( $event );
+  my $data = meetup_to_icalendar( $event, self => 'me@example.org' );
 
 Returns a data structure suitable for inserting to a CalDAV calendar
 from a Meetup event.
 
 =cut
 
-sub meetup_to_icalendar( $meetup ) {
+sub meetup_to_icalendar( $meetup, %options ) {
     my $uid = get_meetup_event_uid( $meetup );
     if( $meetup->{time} !~ /^(\d+)\d\d\d$/ ) {
         warn "Weirdo timestamp '$meetup->{time}' for event";
@@ -60,11 +61,7 @@ sub meetup_to_icalendar( $meetup ) {
     my $startTime = strftime( '%Y-%m-%dT%H:%M:%SZ', gmtime( $start_epoch + ($meetup->{utc_offset} / 1000)));
     my $createdTime = strftime( '%Y-%m-%dT%H:%M:%SZ', gmtime( $meetup->{created} / 1000));
 
-    #use Data::Dumper;
-    #warn Dumper $meetup->{venue}->{address_1};
-    #use Encode 'encode';
-    #$meetup->{venue}->{address_1} = encode('Latin-1',$meetup->{venue}->{address_1});
-    #warn "Encoded Latin-1: " . Dumper $meetup->{venue}->{address_1};
+    my $me = $options{ self };
     
     my $res = {
         uid      => $uid,
@@ -95,6 +92,15 @@ sub meetup_to_icalendar( $meetup ) {
                             },
             },
         },
+        ($me ? (
+        participants => {
+            $me => {
+                email => $me,
+                scheduleRSVP => $JSON::PP::true,
+                scheduleStatus => 'needs-action',
+                #roles => ['attendee'],
+            },
+        }) : ())
     };
 }
 

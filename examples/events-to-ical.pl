@@ -40,6 +40,7 @@ Existing events will not be overwritten.
   --server      Server of the CalDAV calendar (also, credentials)
   --group       URL name of the Meetup group
   --exclude     Don't include events matching this re
+  --attendee    Email address used for rsvp synchronization
   --verbose     show more information
   --dry-run     don't update the calendar
 
@@ -59,11 +60,13 @@ GetOptions(
     'g|group=s'    => \my $groupname,
     'sync-file=s'  => \my $sync_file,
 
-    'x|exclude=s' => \my @exclude,
+    'attendee=s'   => \my $attendee,
 
-    'f|force'     => \my $force,
-    'n|dry-run'   => \my $dryrun,
-    'v|verbose'   => \my $verbose,
+    'x|exclude=s'  => \my @exclude,
+
+    'f|force'      => \my $force,
+    'n|dry-run'    => \my $dryrun,
+    'v|verbose'    => \my $verbose,
     'help!' => \my $opt_help,
     'version!' => \my $opt_version,
 ) or pod2usage(-verbose => 1) && exit;
@@ -76,6 +79,8 @@ if( $opt_version ) {
 
 $groupname ||= 'Perl-User-Groups-Rhein-Main';
 $davcalendar ||= 'Default';
+$attendee ||= 'corion@corion.net';
+
 my $today = strftime '%Y-%m-%dT00:00:01', localtime;
 my $syncToken;
 if( $sync_file and -r $sync_file ) {
@@ -101,7 +106,7 @@ sub verbose(@msg) {
 sub add_event {
     my( $caldav, $calendar, $event ) = @_;
     if( ! $dryrun ) {
-        my $data = meetup_to_icalendar( $event );
+        my $data = meetup_to_icalendar( $event, self => $attendee );
         my $handle = $caldav->NewEvent( $calendar, $data);
     } else {
         print "Would add event\n";
@@ -111,8 +116,7 @@ sub add_event {
 sub update_event {
     my( $caldav, $href, $event ) = @_;
     if( ! $dryrun ) {
-        my $data = meetup_to_icalendar( $event );
-        #warn Dumper $data;
+        my $data = meetup_to_icalendar( $event, self => $attendee );
         my $handle = $caldav->UpdateEvent( $href, $data);
     } else {
         print "Would update event\n";
@@ -132,10 +136,12 @@ sub ical_prop( $ical, $property ) {
 }
 
 sub entry_is_different( $dav, $meetup, %upstream ) {
+warn "--- meetup";
     my $meetup_ical = as_ical( meetup_to_icalendar( $meetup ));
-
+warn "--- caldav";
     my $dav_ical = as_ical( $dav );
-
+    die;
+    
     my %differences;
 
     my %data = (
@@ -163,7 +169,7 @@ sub entry_is_different( $dav, $meetup, %upstream ) {
             #$Data::Dumper::Useqq = 1;
             #warn "Meetup " . Dumper $upstream;
             #warn "DAV    " . Dumper $local;
-            verbose( "$attribute has changed from '$local' to '$upstream'");
+            verbose( "$attribute has changed from '$local' ($downstream_moniker) to '$upstream' ($upstream_moniker)");
             $differences{ $attribute } = $upstream;
         }
     };
@@ -213,7 +219,10 @@ if( $syncToken and !$force) {
     ( undef, $removed, $errors ) = $calendar->SyncEvents($davcalendar, after => $today, syncToken => $syncToken );
 };
 
+# Net::CardDAVTalk messes up the encoding by double-encoding it :(
+# https://rt.cpan.org/Public/Bug/Display.html?id=120592
 $upstream_events = $calendar->GetEvents($davcalendar, after => $today );
+
 # The user deleted these on their DAV calendar, so we won't re-sync
 # these unless --force'd
 my %dav_deleted = map {
@@ -281,3 +290,10 @@ if( ! $davserver ) {
     binmode $fh, ':raw';
     print $fh $calendar->ics->as_string;
 }
+
+=head1 KNOWN ISSUES
+
+UTF-8 values in CalDAV servers get double-encoded. This is a bad heuristic
+in L<Net::CardDAVTalk> that double-decodes values.
+
+=cut
