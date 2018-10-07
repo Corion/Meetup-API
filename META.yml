@@ -33,7 +33,7 @@ requires:
   POSIX: '0'
   URI::Escape: '0'
   URI::URL: '0'
-  perl: '5.006'
+  perl: '5.014'
 resources:
   repository: git://github.com/Corion/Meetup-API.git
 version: '0.02'
