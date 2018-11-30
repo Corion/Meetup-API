@@ -136,11 +136,11 @@ sub ical_prop( $ical, $property ) {
 }
 
 sub entry_is_different( $dav, $meetup, %upstream ) {
-warn "--- meetup";
+#warn "--- meetup";
     my $meetup_ical = as_ical( meetup_to_icalendar( $meetup ));
-warn "--- caldav";
+#warn "--- caldav";
     my $dav_ical = as_ical( $dav );
-    die;
+    #die;
     
     my %differences;
 
