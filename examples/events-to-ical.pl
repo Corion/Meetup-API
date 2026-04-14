@@ -124,7 +124,7 @@ sub update_event {
 }
 
 sub as_ical( $caldavArgs ) {
-    Net::CalDAVTalk->_argsToVCalendar($caldavArgs)->{entries}->[0]
+    Net::CalDAVTalk->new(url => 'https://example.com')->_argsToVCalendar($caldavArgs)->{entries}->[0]
 }
 
 sub ical_prop( $ical, $property ) {
@@ -141,7 +141,7 @@ sub entry_is_different( $dav, $meetup, %upstream ) {
 #warn "--- caldav";
     my $dav_ical = as_ical( $dav );
     #die;
-    
+
     my %differences;
 
     my %data = (
